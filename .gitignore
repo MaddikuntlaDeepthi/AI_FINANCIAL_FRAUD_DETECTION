@@ -1,0 +1,48 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Temporary database files
+*.db-journal
+# Large datasets
+data/creditcard.csv
+data/processed/
+
+# Large evaluation outputs
+reports/evaluation_predictions.csv
+reports/final_evaluation_predictions.csv
+reports/full_dataset_evaluation_predictions.csv
+
+# Keep small test datasets
+!data/fraud_test_upload.csv
+!data/fraud_test_with_labels.csv
+!data/test_transactions.csv
