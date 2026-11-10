@@ -286,16 +286,44 @@ def load_model():
 
 
 @st.cache_resource
+
+@st.cache_resource
 def load_split():
+    SPLIT_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     if not SPLIT_PATH.exists():
+        split_url = (
+            "https://github.com/MaddikuntlaDeepthi/"
+            "AI_FINANCIAL_FRAUD_DETECTION/releases/download/"
+            "v1.0.0/train_test_data.joblib"
+        )
+
+        try:
+            with st.spinner("Downloading processed training and testing data..."):
+                with urlopen(split_url, timeout=300) as response:
+                    with open(SPLIT_PATH, "wb") as file:
+                        shutil.copyfileobj(response, file)
+
+        except Exception as e:
+            if SPLIT_PATH.exists():
+                SPLIT_PATH.unlink()
+
+            st.error(f"Processed dataset download failed: {e}")
+            return None
+
+    try:
+        data = joblib.load(SPLIT_PATH)
+
+        if not isinstance(data, dict):
+            st.error("Invalid processed dataset format.")
+            return None
+
+        return data
+
+    except Exception as e:
+        st.error(f"Could not load processed dataset: {e}")
         return None
 
-    data = joblib.load(SPLIT_PATH)
-
-    if not isinstance(data, dict):
-        return None
-
-    return data
 
 
 @st.cache_data
