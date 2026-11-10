@@ -1,4 +1,5 @@
-
+import shutil
+from urllib.request import urlopen
 from pathlib import Path
 import json
 import warnings
@@ -237,14 +238,37 @@ footer {
 # ============================================================
 
 @st.cache_data
-def load_dataset():
-    if not DATA_PATH.exists():
-        return None
 
-    # Remove exact duplicate rows so dashboard statistics match the cleaned dataset.
+def load_dataset():
+    DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    if not DATA_PATH.exists():
+        dataset_url = (
+            "https://github.com/MaddikuntlaDeepthi/"
+            "AI_FINANCIAL_FRAUD_DETECTION/releases/download/"
+            "v1.0.0/creditcard.csv"
+        )
+
+        try:
+            with st.spinner("Downloading fraud detection dataset..."):
+                with urlopen(dataset_url, timeout=300) as response:
+                    with open(DATA_PATH, "wb") as file:
+                        shutil.copyfileobj(response, file)
+
+        except Exception as e:
+            if DATA_PATH.exists():
+                DATA_PATH.unlink()
+
+            st.error(f"Dataset download failed: {e}")
+            return None
+
+    # Remove exact duplicate rows so dashboard statistics match
+    # the cleaned dataset.
     data = pd.read_csv(DATA_PATH)
     data = data.drop_duplicates().reset_index(drop=True)
+
     return data
+
 
 
 @st.cache_resource
